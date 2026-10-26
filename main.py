@@ -1,4 +1,4 @@
-import argparse, torch
+﻿import argparse, torch
 from torch import nn
 from torch.utils.data import DataLoader, random_split, Subset
 from torchvision import datasets, transforms
@@ -18,7 +18,7 @@ def main():
    z=self.patch(x).flatten(2).transpose(1,2); z=torch.cat((self.cls.expand(len(x),-1,-1),z),1)+self.pos; return self.head(self.enc(z)[:,0])
  m=ViT().to(device); opt=torch.optim.AdamW(m.parameters(),lr=5e-4); lossfn=nn.CrossEntropyLoss()
  def epoch(dl,train):
-  m.train(train); total=ok=cnt=0
+  m.train(bool(train)); total=ok=cnt=0
   for x,y in dl:
    x,y=x.to(device),y.to(device); opt.zero_grad(); out=m(x); loss=lossfn(out,y)
    if train: loss.backward(); opt.step()
@@ -28,3 +28,4 @@ def main():
  for i in range(a.epochs): result[f'epoch_{i+1}']={'train':epoch(DataLoader(trn,batch_size=a.batch_size,shuffle=True),'train'),'validation':epoch(DataLoader(val,batch_size=a.batch_size),'eval')}
  result['test']=epoch(DataLoader(test,batch_size=a.batch_size),'eval'); torch.save(m.state_dict(),root/'outputs/model.pt'); import json; (root/'outputs/metrics.json').write_text(json.dumps(result,indent=2)); print(json.dumps(result,indent=2))
 if __name__=='__main__': main()
+
